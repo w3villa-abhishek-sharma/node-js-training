@@ -1,0 +1,12 @@
+a. Variables, data types, and operators
+b. Control flow (if-else statements, loops)
+c. Functions and scope
+d. Arrays and objects
+e. Asynchronous programming with callbacks
+f. Reviewing essential JavaScript concepts like variables, data types, operators,
+conditionals, loops, and functions.
+g. Exploring advanced JavaScript features like arrow functions, modules, and
+promises.
+h. Understanding modules in Node.js and the CommonJS module system.
+i. Using the npm package manager to install and manage dependencies.
+j. Creating and publishing own Node.js modules.
