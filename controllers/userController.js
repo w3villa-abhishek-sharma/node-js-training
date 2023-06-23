@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
 const Users = require("../models/User");
 
 
 // Sign Up a user
 const createUser = async (req, res) => {
     try {
-        const { username, password, email } = req.body;
+        let { username, password, email } = req.body;
         if (!username || !password || !email) {
             return res.json({ status: false, msg: "Provide the valid data." });
         }
@@ -13,7 +14,8 @@ const createUser = async (req, res) => {
         if (user) {
             return res.json({ status: false, msg: "User already exist with this username." });
         }
-
+        const salt = bcrypt.genSaltSync(Number(process.env.SALT_ROUNDS));
+        password = bcrypt.hashSync(password,salt);
         user = await Users.create({ username, password, email });
         let token = jwt.sign({ username, email, _id: user._id }, process.env.SECRET_KEY);
         return res.json({ status: true, token });
@@ -67,12 +69,13 @@ const getProfile = async (req, res) => {
 }
 const signIn = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        let { username, password } = req.body;
         if (!username || !password) {
             return res.json({ status: false, msg: "Provide the valid data." });
         }
         let user = await Users.findOne({ username });
-        if (password !== user.password) {
+        let valid = bcrypt.compareSync(password,user.password);
+        if (!valid) {
             return res.json({ status: false, msg: "username/password is invalid." });
         }
         let token = jwt.sign({ username: user.username, email: user.email, _id: user._id }, process.env.SECRET_KEY);
