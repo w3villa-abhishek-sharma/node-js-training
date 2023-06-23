@@ -1,13 +1,14 @@
 const jwt = require("jsonwebtoken");
+const Users = require("../models/User");
 
-const authentication = (req, res, next) => {
+const authentication = async(req, res, next) => {
     try {
         const { token } = req.headers;
         if (!token) {
             return res.status(401).json({ status: false, msg: "unauthorized access" });
         }
         let data = jwt.verify(token, process.env.SECRET_KEY);
-        let user = global.users[data.username];
+        let user = await Users.findById(data._id);
         if (!user) {
             return res.status(401).json({ status: false, msg: "unauthorized access" });
         }
