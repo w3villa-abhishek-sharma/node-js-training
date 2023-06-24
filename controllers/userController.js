@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const Users = require("../models/User");
-const logger = require("../loger");
+const logger = require("../logger");
 
 
 // Sign Up a user
@@ -21,7 +21,11 @@ const createUser = async (req, res) => {
         let token = jwt.sign({ username, email, _id: user._id }, process.env.SECRET_KEY);
         return res.status(201).json({ status: true, token });
     } catch (error) {
-        logger.info({"error":error});
+        logger.log({
+            level: 'error',
+            message: error,
+            ipAddress: req.ip
+          });
         console.log(error);
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
@@ -38,7 +42,11 @@ const updateUser = async (req, res) => {
         let user = await Users.findByIdAndUpdate(_id, { password, email }, { new: true });
         return res.json({ status: true, msg: "update your profile successfully.", user });
     } catch (error) {
-        logger.info({"error":error});
+        logger.log({
+            level: 'error',
+            message: error,
+            ipAddress: req.ip
+          });
         console.log(error);
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
@@ -54,7 +62,11 @@ const deleteUser = async (req, res) => {
         let user = await Users.findByIdAndDelete(_id);
         return res.json({ status: true, msg: "your account delete successfully.", user });
     } catch (error) {
-        logger.info({"error":error});
+        logger.log({
+            level: 'error',
+            message: error,
+            ipAddress: req.ip
+          });
         console.log(error);
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
@@ -67,7 +79,11 @@ const getProfile = async (req, res) => {
         let profile = await Users.findById(_id).select("-password");
         return res.json({ status: true, profile });
     } catch (error) {
-        logger.info({"error":error});
+        logger.log({
+            level: 'error',
+            message: error,
+            ipAddress: req.ip
+          });
         console.log(error);
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
@@ -86,7 +102,11 @@ const signIn = async (req, res) => {
         let token = jwt.sign({ username: user.username, email: user.email, _id: user._id }, process.env.SECRET_KEY);
         return res.json({ status: true, token });
     } catch (error) {
-        logger.info({"error":error});
+        logger.log({
+            level: 'error',
+            message: error,
+            ipAddress: req.ip
+          });
         console.log(error);
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }

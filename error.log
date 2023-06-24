@@ -1,1 +1,1 @@
-{"level":"error","message":{"error":{"message":"invalid token","name":"JsonWebTokenError"}}}
+2023-06-24T06:02:19.496Z [right meow!] error: TypeError: Cannot read properties of null (reading 'password') from ip -> ::ffff:127.0.0.1
