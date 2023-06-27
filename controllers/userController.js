@@ -28,7 +28,7 @@ const updateUser = (req, res) => {
     try {
         const { username } = req.user;
         const { password, email } = req.body;
-        if (!username) {
+        if (!username || !password || !email) {
             return res.json({ status: false, msg: "Provide the valid data." });
         }
         if (!global.users[username]) {
@@ -38,7 +38,6 @@ const updateUser = (req, res) => {
         let user = global.users[username];
         return res.json({ status: true, msg: "update your profile successfully.", user });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
 }
@@ -64,7 +63,7 @@ const deleteUser = (req, res) => {
 // Get user our profile --> Login Required
 const readUser = (req, res) => {
     try {
-        const { username } = req.query;
+        const { username } = req.user;
         if (!username) {
             return res.json({ status: false, msg: "Provide the valid data." });
         }

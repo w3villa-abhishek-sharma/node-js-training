@@ -11,9 +11,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/v1",require("./routes"));
+app.use("/api/v1", require("./routes"));
 
 // Server Listen
-app.listen(PORT ,()=>{
+module.exports = app.listen(PORT, () => {
     console.log("Server Start.");
 })

@@ -11,14 +11,10 @@ const authentication = (req, res, next) => {
         if (!user) {
             return res.status(401).json({ status: false, msg: "unauthorized access" });
         }
-        if (user.email !== data.email) {
-            return res.status(401).json({ status: false, msg: "unauthorized access" });
-        }
         req.user = user;
         next();
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ status: false, msg: "Internal server error." });
+        return res.status(401).json({ status: false, msg: "unauthorized access" });
     }
 }
 
