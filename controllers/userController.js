@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const Users = require("../models/User");
 const NodeCache = require("node-cache");
+const logger = require("../middleware/logger");
 
 const cache = new NodeCache();
 
@@ -25,6 +26,7 @@ const createUser = async (req, res) => {
         user = await Users.create({ username, password, email });
         cache.set(username, user);
         let token = jwt.sign({ username, email, _id: user._id }, process.env.SECRET_KEY);
+        logger.log({ level: 'info', message: `${username} user register successfully`, ip: req.ip });
         return res.json({ status: true, token });
     } catch (error) {
         console.log(error);
@@ -51,9 +53,10 @@ const updateUser = async (req, res) => {
         } else {
             user = await Users.findByIdAndUpdate(_id, { password, email }, { new: true });
         }
+        logger.log({ level: 'info', message: `${username} user update successfully`, ip: req.ip });
         return res.json({ status: true, msg: "update your profile successfully.", user });
     } catch (error) {
-        console.log(error);
+        logger.log({ level: 'error', message: error, ip: req.ip });
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
 }
@@ -66,9 +69,10 @@ const deleteUser = async (req, res) => {
             return res.json({ status: false, msg: "Provide the valid data." });
         }
         let user = await Users.findByIdAndDelete(_id);
+        logger.log({ level: 'info', message: `${username} user delete profile successfully`, ip: req.ip });
         return res.json({ status: true, msg: "your account delete successfully.", user });
     } catch (error) {
-        console.log(error);
+        logger.log({ level: 'error', message: error, ip: req.ip });
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
 }
@@ -83,9 +87,10 @@ const getProfile = async (req, res) => {
         }
         let profile = await Users.findById(_id);
         cache.set(username, profile)
+        logger.log({ level: 'info', message: `${username} user get profile successfully`, ip: req.ip });
         return res.json({ status: true, profile });
     } catch (error) {
-        console.log(error);
+        logger.log({ level: 'error', message: error, ip: req.ip });
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
 }
@@ -104,12 +109,14 @@ const signIn = async (req, res) => {
         }
         let valid = bcrypt.compareSync(password, user.password);
         if (!valid) {
+            logger.log({ level: 'info', message: `${username} user try with invalid credentials`, ip: req.ip });
             return res.json({ status: false, msg: "username/password is invalid." });
         }
         let token = jwt.sign({ username: user.username, email: user.email, _id: user._id }, process.env.SECRET_KEY);
+        logger.log({ level: 'info', message: `${username} user login successfully`, ip: req.ip });
         return res.json({ status: true, token });
     } catch (error) {
-        console.log(error);
+        logger.log({ level: 'error', message: error, ip: req.ip });
         return res.status(500).json({ status: false, msg: "Internal server error" });
     }
 }

@@ -1,0 +1,2 @@
+2023-06-28T08:27:46.479Z [right meow!] error: JsonWebTokenError: invalid token from IP ==> ::ffff:127.0.0.1
+2023-06-28T08:28:22.996Z [right meow!] error: JsonWebTokenError: invalid token from IP ==> ::ffff:127.0.0.1

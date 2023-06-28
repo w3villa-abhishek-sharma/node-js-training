@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const connectToMongo = require('./db');
+const compression = require("compression");
 
-require('dotenv').config();
+
 
 // Connect with Database
 connectToMongo();
@@ -10,6 +12,8 @@ connectToMongo();
 const PORT = process.env.PORT || 5000;
 
 const app = express();
+// Apply compression middleware globally
+app.use(compression());
 
 
 // use middleware
