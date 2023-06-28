@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Users = require("../models/User");
+const NodeCache = require("node-cache");
+
+const cache = new NodeCache();
 
 const authentication = async(req, res, next) => {
     try {
@@ -8,7 +11,13 @@ const authentication = async(req, res, next) => {
             return res.status(401).json({ status: false, msg: "unauthorized access" });
         }
         let data = jwt.verify(token, process.env.SECRET_KEY);
-        let user = await Users.findById(data._id);
+        let user;
+        if(cache.has(data.username)){
+            user = cache.get(data.username);
+        }else{
+            user = await Users.findById(data._id);
+            cache.set(data.username,user);
+        }
         if (!user) {
             return res.status(401).json({ status: false, msg: "unauthorized access" });
         }
